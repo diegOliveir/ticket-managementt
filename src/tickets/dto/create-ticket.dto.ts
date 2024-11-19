@@ -1,4 +1,6 @@
-export class CreateTicketDto {
+import { IsString } from 'class-validator';
 
-    nome: String
+export class CreateTicketDto {
+  @IsString()
+  nome: string;
 }
