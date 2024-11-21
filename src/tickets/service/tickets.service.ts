@@ -1,46 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/utils/prisma.service'; 
-import { CreateTicketDto } from '../dto/create-ticket.dto'; 
-import { UpdateTicketDto } from '../dto/update-ticket.dto'; 
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { TicketDAO } from '../dao/ticket-dao';
+import { Ticket } from '../entities/ticket.entity';
+import { CreateTicketDto } from '../dto/create-ticket.dto';
+import { UpdateTicketDto } from '../dto/update-ticket.dto';
 
 @Injectable()
 export class TicketsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly ticketDAO: TicketDAO) {}
 
-  async create(createTicketDto: CreateTicketDto) {
-    return this.prisma.tickets.create({ data: createTicketDto });
+  getAllTickets(): Ticket[] {
+    return this.ticketDAO.findAll();
   }
 
-  async findAll() {
-    return this.prisma.tickets.findMany();
+  getTicketById(id: number): Ticket | undefined {
+    return this.ticketDAO.findById(id);
   }
 
-  async findOne(id: string) {
-    const ticket = await this.prisma.tickets.findUnique({ where: { id } });
+  createTicket(createTicketDto: CreateTicketDto): Ticket {
+    return this.ticketDAO.create(createTicketDto);
+  }
+
+  updateTicket(id: number, updateTicketDto: UpdateTicketDto): Ticket | undefined {
+    const ticket = this.ticketDAO.findById(id);
     if (!ticket) {
-      throw new NotFoundException(`Ticket with ID ${id} not found`);
+      throw new BadRequestException('Ticket não encontrado.');
     }
-    return ticket;
+    if (ticket.status === 'closed' && updateTicketDto.status !== 'in_progress') {
+      throw new BadRequestException('Tickets fechados não podem ser editados.');
+    }
+    return this.ticketDAO.update(id, updateTicketDto);
   }
 
-  async update(id: string, updateTicketDto: UpdateTicketDto) {
-    const ticket = await this.prisma.tickets.findUnique({ where: { id } });
-    if (!ticket) {
-      throw new NotFoundException(`Ticket with ID ${id} not found`);
-    }
-
-    return this.prisma.tickets.update({
-      where: { id },
-      data: updateTicketDto,
-    });
-  }
-
-  async remove(id: string) {
-    const ticket = await this.prisma.tickets.findUnique({ where: { id } });
-    if (!ticket) {
-      throw new NotFoundException(`Ticket with ID ${id} not found`);
-    }
-
-    return this.prisma.tickets.delete({ where: { id } });
+  deleteTicket(id: number): boolean {
+    return this.ticketDAO.delete(id);
   }
 }
