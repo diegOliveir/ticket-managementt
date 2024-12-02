@@ -14,13 +14,15 @@ datasource db {
 }
 
 
-model tickets {
+model Tickets {
   id String @id @default(uuid())
   nome String
 }
 
-model user {
+model User {
   id String @id @default(uuid())
   nome String
   cpf String @unique
+  email String
+  senha String
 }
