@@ -19,7 +19,7 @@ export class EmailService {
 
   async sendEmail(to: string, subject: string, text: string, html: string) {
     await this.transporter.sendMail({
-      from: `"No Reply" <${process.env.EMAIL_USER}>`,
+      from: `"Ticket Services" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,

@@ -14,14 +14,15 @@ datasource db {
 }
 
 model Tickets {
-  id    String @id @default(uuid())
-  nome  String
-  admin String
-  user  String
+  id             String          @id @default(uuid())
+  nome           String
+  status         String          @default("open")
+  admin_id       String
+  user_id        String
 
-  User          User          @relation(fields: [user], references: [id])
-  administrador administrador @relation(fields: [admin], references: [id])
-  Files         Files[]
+  User           User            @relation(fields: [user_id], references: [id])
+  administrador  Administrador   @relation(fields: [admin_id], references: [id])
+  Files          Files[]
 }
 
 model Files {
@@ -37,13 +38,14 @@ model User {
   nome    String
   email   String    @unique
   senha   String?
-  Tickets Tickets[]
+  Tickets Tickets[] // Relacionamento de um-para-muitos com Tickets (usuário comum)
 }
 
-model administrador {
+model Administrador {
   id      String    @id @default(uuid())
   nome    String
   email   String    @unique
   senha   String?
-  Tickets Tickets[]
+  Tickets Tickets[] // Relacionamento de um-para-muitos com Tickets (administrador)
 }
+

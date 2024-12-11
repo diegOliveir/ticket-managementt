@@ -57,4 +57,12 @@ export class UserDAO {
       return false;
     }
   }
+  
+  async findAllAdminsWithTickets() {
+    return await this.prisma.administrador.findMany({
+      include: {
+        Tickets: true,
+      },
+    });
+  }
 }
