@@ -18,8 +18,8 @@ export class TicketsController {
     return this.ticketsService.getTicketById(+id);
   }
 
-  @Post()
-  createTicket(@Body() createTicketDto: CreateTicketDto): Ticket {
+  @Post(':id')
+  createTicket(@Param('id') id: string, @Body() createTicketDto: CreateTicketDto): Ticket {
     return this.ticketsService.createTicket(createTicketDto);
   }
 

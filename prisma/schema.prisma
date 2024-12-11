@@ -13,15 +13,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Tickets {
-  id String @id @default(uuid())
-  nome String
+  id    String @id @default(uuid())
+  nome  String
+  admin String
+  user  String
+
+  User          User          @relation(fields: [user], references: [id])
+  administrador administrador @relation(fields: [admin], references: [id])
+  Files         Files[]
+}
+
+model Files {
+  id       String  @id @default(uuid())
+  nome     String
+  url      String
+  ticketId String
+  ticket   Tickets @relation(fields: [ticketId], references: [id])
 }
 
 model User {
-  id String @id @default(uuid())
-  nome String
-  email String @unique
-  senha String?
+  id      String    @id @default(uuid())
+  nome    String
+  email   String    @unique
+  senha   String?
+  Tickets Tickets[]
+}
+
+model administrador {
+  id      String    @id @default(uuid())
+  nome    String
+  email   String    @unique
+  senha   String?
+  Tickets Tickets[]
 }

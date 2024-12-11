@@ -4,7 +4,10 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import googleAuthConfig from './auth/config/google-auth-config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { JwtModule } from '@nestjs/jwt';
+import { FilesModule } from './files/files.module';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -25,8 +28,13 @@ import { JwtModule } from '@nestjs/jwt';
       },
       inject: [ConfigService],
     }),
+    FilesModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
   ],
-  controllers: [], // Adicione seus controllers aqui, se necessário
-  providers: [], // Adicione seus providers aqui, se necessário
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
