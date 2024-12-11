@@ -5,7 +5,6 @@ import googleAuthConfig from '../config/google-auth-config';
 import { ConfigType } from '@nestjs/config';
 import { AuthService } from '../auth.service';
 
-
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -26,7 +25,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       nome: profile.name.givenName,
       cpf:'',
       senha:'' 
-    })
+    }) 
     done(null, user)
   }
 

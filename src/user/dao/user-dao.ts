@@ -24,6 +24,15 @@ export class UserDAO {
     });
   }
 
+  async updatePassword(id, password: string): Promise<User | null> {
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        senha: password,
+      },
+    });
+  }
+
   async create(user: CreateUserDto): Promise<User> {
     return await this.prisma.user.create({
       data: user,

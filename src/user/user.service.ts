@@ -28,6 +28,10 @@ export class UserService {
     return this.userDAO.update(id, updateUserDto)
   }
 
+  updatePassword(id: number, password: string){
+    return this.userDAO.updatePassword(id, password)
+  }
+
   remove(id: number) {
     return this.userDAO.delete(id)
   }
