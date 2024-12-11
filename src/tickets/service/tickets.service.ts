@@ -3,25 +3,45 @@ import { TicketDAO } from '../dao/ticket-dao';
 import { Ticket } from '../entities/ticket.entity';
 import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { UpdateTicketDto } from '../dto/update-ticket.dto';
+import { UserDAO } from 'src/user/dao/user-dao';
+import { Tickets } from '@prisma/client';
 
 @Injectable()
 export class TicketsService {
-  constructor(private readonly ticketDAO: TicketDAO) {}
+  constructor(
+    private readonly ticketDAO: TicketDAO,
+    private readonly userDAO: UserDAO
+  ) {}
 
-  getAllTickets(): Ticket[] {
-    return this.ticketDAO.findAll();
+  async getAllTickets(): Promise<Tickets[]> {
+    return await this.ticketDAO.findAll();
   }
 
-  getTicketById(id: number): Ticket | undefined {
+  async getTicketById(id: string): Promise<Tickets> | undefined {
     return this.ticketDAO.findById(id);
   }
 
-  createTicket(createTicketDto: CreateTicketDto): Ticket {
-    return this.ticketDAO.create(createTicketDto);
+  async createTicket(createTicketDto: CreateTicketDto, userId: string) {
+    try{
+      const user = await this.userDAO.findById(userId);
+      if (!user) {
+        throw new BadRequestException('Usuário não encontrado.');
+      }
+      const admins = await this.userDAO.findAllAdminsWithTickets();
+      if (!admins) {
+        throw new BadRequestException('Não há administradores disponíveis.');
+      }
+      admins.sort((a, b) => a.Tickets.length - b.Tickets.length);
+      const adminId = admins[0].id;
+      return this.ticketDAO.create(createTicketDto, userId, adminId);
+
+    }catch(e){
+      throw new BadRequestException(e.message);
+    }
   }
 
-  updateTicket(id: number, updateTicketDto: UpdateTicketDto): Ticket | undefined {
-    const ticket = this.ticketDAO.findById(id);
+  async updateTicket(id: string, updateTicketDto: UpdateTicketDto): Promise<Tickets> | undefined {
+    const ticket = await this.ticketDAO.findById(id);
     if (!ticket) {
       throw new BadRequestException('Ticket não encontrado.');
     }
@@ -31,7 +51,7 @@ export class TicketsService {
     return this.ticketDAO.update(id, updateTicketDto);
   }
 
-  deleteTicket(id: number): boolean {
-    return this.ticketDAO.delete(id);
+  async deleteTicket(id: string): Promise<boolean> {
+    return await this.ticketDAO.delete(id);
   }
 }

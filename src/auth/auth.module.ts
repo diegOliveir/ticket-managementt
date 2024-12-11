@@ -5,9 +5,23 @@ import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { UserDAO } from 'src/user/dao/user-dao';
 import { PrismaService } from 'src/utils/prisma.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailService } from 'src/utils/mail.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [GoogleStrategy, AuthService, UserService, UserDAO, PrismaService]})
-export class AuthModule {
-}
+  imports: [
+    
+  ],
+  providers: [
+    GoogleStrategy,
+    AuthService,
+    UserService,
+    UserDAO,
+    PrismaService,
+    JwtService,
+    EmailService
+  ],
+})
+export class AuthModule {}

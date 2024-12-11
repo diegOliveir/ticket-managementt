@@ -13,16 +13,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Tickets {
-  id String @id @default(uuid())
-  nome String
+  id             String          @id @default(uuid())
+  nome           String
+  status         String          @default("open")
+  admin_id       String
+  user_id        String
+
+  User           User            @relation(fields: [user_id], references: [id])
+  administrador  Administrador   @relation(fields: [admin_id], references: [id])
+  Files          Files[]
+}
+
+model Files {
+  id       String  @id @default(uuid())
+  nome     String
+  url      String
+  ticketId String
+  ticket   Tickets @relation(fields: [ticketId], references: [id])
 }
 
 model User {
-  id String @id @default(uuid())
-  nome String
-  cpf String @unique
-  email String
-  senha String
+  id      String    @id @default(uuid())
+  nome    String
+  email   String    @unique
+  senha   String?
+  Tickets Tickets[] // Relacionamento de um-para-muitos com Tickets (usuário comum)
 }
+
+model Administrador {
+  id      String    @id @default(uuid())
+  nome    String
+  email   String    @unique
+  senha   String?
+  Tickets Tickets[] // Relacionamento de um-para-muitos com Tickets (administrador)
+}
+
