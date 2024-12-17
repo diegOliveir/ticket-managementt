@@ -8,6 +8,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { JwtModule } from '@nestjs/jwt';
 import { FilesModule } from './files/files.module';
 import { join } from 'path';
+import { TicketMessagesModule } from './ticket-messages/ticket-messages.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    TicketMessagesModule,
   ],
   controllers: [],
   providers: [],
